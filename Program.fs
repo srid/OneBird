@@ -10,13 +10,13 @@ type Tweet =
     }
 
 type TwitterModel() =
-    let mutable tweets: Tweet list = []
+    let tweets = ResizeArray()
 
-    member this.Tweets = tweets
+    member this.Tweets = Seq.toList tweets
 
     member this.PostTweet(msg: string) = 
         let tweet = { Tweet.Id = 1; Message = msg }
-        tweets <- tweets @ [tweet]
+        tweets.Add(tweet)
         tweet
         
 
