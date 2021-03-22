@@ -30,6 +30,8 @@ type Tweeted(tweet: Tweet) =
 type PostTweet(msg: string) = 
     inherit Command<TwitterModel, int>()
 
+    member this.Msg: string = msg
+
     override Command.Execute(model: TwitterModel): int =
         let tweet = model.PostTweet msg
         Command.RaiseEvent (new Tweeted(tweet))
