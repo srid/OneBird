@@ -11,6 +11,11 @@
 
   <ItemGroup>
     <PackageReference Include="Memstate.Core" Version="0.7.46" />
+    <PackageReference Include="Memstate.JsonNet" Version="0.7.46" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="FSharp.Core" Version="5.0.1" />
   </ItemGroup>
 
 </Project>

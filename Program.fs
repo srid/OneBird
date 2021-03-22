@@ -2,15 +2,23 @@
 
 open System
 open Memstate
+open Memstate.JsonNet
 
 type Tweet =
     { Id: int
       Message: string
     }
 
-type TwitterModel =
-    { Tweets: Tweet list
-    }
+type TwitterModel() =
+    let mutable tweets: Tweet list = []
+
+    member this.Tweets = tweets
+
+    member this.PostTweet(msg: string) = 
+        let tweet = { Tweet.Id = 1; Message = msg }
+        tweets <- tweets @ [tweet]
+        tweet
+        
 
 // Events 
 
@@ -23,7 +31,7 @@ type PostTweet(msg: string) =
     inherit Command<TwitterModel, int>()
 
     override Command.Execute(model: TwitterModel): int =
-        let tweet = { Tweet.Id = 1; Message = msg }
+        let tweet = model.PostTweet msg
         Command.RaiseEvent (new Tweeted(tweet))
         tweet.Id
 
@@ -37,4 +45,16 @@ type AllTweets() =
 
 [<EntryPoint>]
 let main argv =
+    // TODO: understand concepts used
+    printfn "Begin"
+    async {
+        let! engine = Engine.Start<TwitterModel>() |> Async.AwaitTask
+        let cmd = new PostTweet("Hello world")
+        let! res = engine.Execute(cmd) |> Async.AwaitTask
+        printfn "res: %d" res
+        let query = new AllTweets()
+        let! allTweets = engine.Execute(query) |> Async.AwaitTask
+        printfn "%A" allTweets
+        printfn "Fin."
+    } |> Async.RunSynchronously
     0 // return an integer exit code
